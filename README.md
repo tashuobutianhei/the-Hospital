@@ -16,14 +16,14 @@
 #### 关于接口填充的地方：
 axios.get('http:\\+接口')即可。
 关于有接口的位置：
-app.vue
-gua.vue
-docterTable.vue
-docter.vue
-docterReady.vue
-docterWer.vue
-docterRoom.vue
-loginReg.vue
+* app.vue
+* gua.vue
+* docterTable.vue
+* docter.vue
+* docterReady.vue
+* docterWer.vue
+* docterRoom.vue
+* loginReg.vue
 
 #### 目录结构介绍
 src目录下为核心代码，各种.vue文件在 src/components中
@@ -49,7 +49,7 @@ src目录下为核心代码，各种.vue文件在 src/components中
                     IdCard:'',  //身份证
                     password:'',  //密码
                     suffers:[],//数组内容为患者的id，由此来为每个医生进行挂号后的患者分配
-                }
+           }
     (```)
 ####  guhao部分
 功能：

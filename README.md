@@ -1,30 +1,99 @@
-# guahao
+## 说明文档：
 
-> A Vue.js project
+### 使用说明：
+* 装node环境和npm环境，npm-v node -v命有版本号即为安装成功（安装node环境时会自动安装npm环境）
+* cmd进入the-hospital目录下
+* cmd 命令 npm run dev 即可启动服务
 
-## Build Setup
+### 项目介绍：
 
-``` bash
-# install dependencies
-npm install
+#### 注意：
+关于cors跨域时，
+后台的请求头设置("Access-Control-Allow-Credentials", "true")
+在设置了这个请求头之后，Access-Control-Allow-Origin不能设为星号，只能为特定的域名，我的前端域名为**http:\\localhost:8080**
+具体的json返回格式在代码中已经进行了注释，请务必按照格式来，如果有问题，可以改。
 
-# serve with hot reload at localhost:8080
-npm run dev
+#### 关于接口填充的地方：
+axios.get('http:\\+接口')即可。
+关于有接口的位置：
+app.vue
+gua.vue
+docterTable.vue
+docter.vue
+docterReady.vue
+docterWer.vue
+docterRoom.vue
+loginReg.vue
 
-# build for production with minification
-npm run build
+#### 目录结构介绍
+src目录下为核心代码，各种.vue文件在 src/components中
 
-# build for production and view the bundle analyzer report
-npm run build --report
+##### manger部分：
+功能：
+    * 进行对医生的信息的添加，删除，修改（默认医生的账号密码时manger直接进行分配的，不允许医生注册）
+    * 进行按照科室对医生的进行排班，排班原则，分为早班晚班，可以安排之后四天的排班。关于排班冲突算法，请后台自行解决。
+注：目前修改功能暂时没有实现
 
-# run unit tests
-npm run unit
-
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+#### docter部分：
+功能：
+    * 分为三个部分，未诊断病人，已诊断病人，住院病人，相应的转换关系为，当病人挂号后即成为该医生的未诊断病人，在诊断过后如果诊断为住院，则转换为住院病人，如果无需住院则转换为已诊断病人。
+    * 医生信息字段：
+    (```)
+       {
+                    DocId:'', /医生id/
+                    name:'',  
+                    address:'',
+                    tel:'',
+                    which:'',  //治疗方向，具体方向
+                    user:'',  //账号
+                    IdCard:'',  //身份证
+                    password:'',  //密码
+                    suffers:[],//数组内容为患者的id，由此来为每个医生进行挂号后的患者分配
+                }
+    (```)
+####  guhao部分
+功能：
+  * 进行信息查询，按照医生姓名，科室，病情描述进行查询相应的医生信息。具体查询原理请后台考虑实现。
+  * 进行挂号，按照相应信息进行挂号，请根据排班表进行挂号功能实现。
+  
+#### 登录注册流程描述：
+  * 进入页面后就会发送一个请求，判断当前用户的session信息是否存在，位置：app.vue
+  * 如果判定session信息存在，即判断为登录状态，相应返回格式代码注释中有。
+  * 如果不存在则需要登录，登录时进行用户名密码验证进行登录，登录后在后台种session 位置 logOrReg.vue
+  注：不确定java中的session流程是怎么样的，node中的经验是，app.vue中的那个接口很重要，判断是否登录，
+  
+####  数据结构：（我的建议）
+      以下为一条病人信息+病情信息的json，需要用这个json在医生诊治过程中进行数据传递，建议为病人基本信息建表，病人病情信息建表。json格式可能不太好写。
+          (```)
+             {
+                    type:'un'//表示未诊治,
+                    id:'病号id'
+                    name:'病号姓名'，
+                    //具体就诊信息
+                    info:{
+                      time:''//就诊日期
+                      age:''//年龄
+                      sex:''//性别
+                      tel:''//电话
+                      value:''//病情描述
+                      address:''//地址
+                      //以上信息为未诊治时的应有信息，以下信息在此数组中只留字段key就可以了，就是留写成ke:''即可，得发送过来
+                      docterValue:''//医生针对其的详细描述
+                      huayan:''//化验情况
+                      result:''//医生诊断结果
+                      way:''//治疗方式
+                      domains:[]//药物或者手术情况
+                      room:''//true或false 是否住院
+                       //住院记录数组,在列表中可以为空，但是留字段位置
+                      roomValue:[
+                        {
+                          date:''//一次诊治记录的日期
+                          value:""//患者病情
+                          how:''//本次记录如何诊治
+                          medicine:''//药物情况
+                          out:''//是否可以出院 true或者false
+                        }
+                      ]
+                    }
+                  }
+           (```)

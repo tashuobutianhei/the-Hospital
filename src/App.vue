@@ -5,8 +5,38 @@
 </template>
 
 <script>
+import axios from 'axios'
+axios.defaults.withCredentials=true;
+
 export default {
-  name: 'App'
+  name: 'App',
+  data(){
+    return{
+      
+    }
+  },
+  mounted(){
+      //判断是否为登录状态，
+      axios.get('').then((response)=>{
+        /*
+        返回值为
+        {
+            res:1//1表示已经登录
+            username://用户名
+            identity://身份
+        }
+        */
+        if(res.data.res==1){
+            this.$store.commit('loginSucceful',{
+              username:response.data.username,
+              loginIf:true,
+              identity:response.data.identity,
+              });
+        }else{
+            //未登录状态
+        }
+      })
+  }
 }
 </script>
 

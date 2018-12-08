@@ -60,6 +60,9 @@
 </template>
 
 <script>
+    import axios from 'axios'
+    import Alert from "./alert";
+    axios.defaults.withCredentials=true;
     import ElButton from "element-ui/packages/button/src/button";
     import ElOption from "element-ui/packages/select/src/option";
 
@@ -67,9 +70,18 @@
       components: {
         ElOption,
         ElButton},
-      name: "manger-schel",
-
+        name: "manger-schel",
         props:['date'],
+        mounted(){
+          console.log(this.$route.params.keshi);
+          console.log(this.getdate());
+          //未完成
+          axios.get('',{
+            type:this.$route.params.keshi
+          }).then((res)=>{
+            //返回
+          })
+        },
         data(){
           return{
             chanceDocter:'',
@@ -88,6 +100,7 @@
                 type:'button',
                 ban:'wu'
               },
+              
             ],
             DocterList:[
               {

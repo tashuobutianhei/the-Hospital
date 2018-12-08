@@ -97,12 +97,42 @@
 </template>
 
 <script>
+   import axios from 'axios'
+    import Alert from "./alert";
+
+    axios.defaults.withCredentials=true;
     export default {
       components: {
 
       },
       name: "docter-table",
         props:['message'],
+        mounted(){
+            //console.log(this.message);
+            var self = this;
+            axios.get('',{
+              params:{
+                type:this.message
+              }
+            }).then((res)=>{
+              /*返回一个数组，数组为该类型的医生信息
+              docterList=[
+                {
+                    DocId:'', /医生id/
+                    name:'',  
+                    address:'',
+                    tel:'',
+                    which:'',  //治疗方向，具体方向
+                    user:'',  //账号
+                    IdCard:'',  //身份证
+                    password:'',  //密码
+                    suffers:[],//数组内容为患者的id，由此来为每个医生进行挂号后的患者分配
+                }
+              ]
+              */
+              self.tableDataDocter=res.data.docterList
+            })
+        },
         data(){
             var checkUser=(rule, value, callback) => {
               if(/^\w{6,20}$/.test(value)){
@@ -140,17 +170,7 @@
             return{
               dialogFormVisible:false,
               tableDataDocter:[
-                // {
-                //   DocId:'',
-                //   name:'',
-                //   address:'',
-                //   tel:'',
-                //   which:'',
-                //   user:'',
-                //   IdCard:'',
-                //   password:'',
-                //   remove:''
-                // }
+            
               ],
               form:  {
                 DocId:'',
@@ -225,24 +245,44 @@
             this.dialogFormVisible=true;
           },
           submitForm(formName) {
+            var self = this;
             this.$refs[formName].validate((valid) => {
               if (valid) {
-                alert('submit!');
-                //提交操作
-                this.tableDataDocter.push(
-                  {
-                    DocId:this.form.DocId,
-                    name:this.form.name,
-                    address:this.form.address,
-                    tel:this.form.tel,
-                    which:this.form.which,
-                    user:this.form.user,
-                    IdCard:this.form.IdCard,
-                    password:this.form.password,
-                    remove:this.form.remove
-                  })
-                this.resetForm(formName)
-                this.dialogFormVisible=false;
+                //进行对医生信息的增加功能，暂时没有写修改医生信息的功能
+                axios.get('',{
+                  params:{
+                        DocId:self.form.DocId,
+                        name:self.form.name,
+                        address:self.form.address,
+                        tel:self.form.tel,
+                        which:self.form.which,
+                        user:self.form.user,
+                        IdCard:self.form.IdCard,
+                        password:self.form.password,
+                        remove:self.form.remove
+                  }
+                }).then((res)=>{
+                  if(res.data.res===1){
+                     alert('submit!');
+                      //提交操作
+                      this.tableDataDocter.push(
+                        {
+                          DocId:self.form.DocId,
+                          name:self.form.name,
+                          address:self.form.address,
+                          tel:self.form.tel,
+                          which:self.form.which,
+                          user:self.form.user,
+                          IdCard:self.form.IdCard,
+                          password:self.form.password,
+                          remove:self.form.remove
+                        })
+                      this.resetForm(formName)
+                  }else{
+                       alert('error submit!');
+                  }
+                   this.dialogFormVisible=false;
+                })
               } else {
                 console.log('error submit!!');
                 return false;
@@ -254,11 +294,24 @@
           },
           removeDoc(id){
             let ind=-1;
+            let self = this;
             this.tableDataDocter.forEach((item,index)=>{
               if(item.DocId==id)
                 ind=index;
             })
-            this.tableDataDocter.splice(ind,1);
+            //删除医生接口，返回res=1表示成功
+            axios.get('',{
+              params:{
+                DocId:ind
+              }
+            }).then((res)=>{
+              if(res.data.res===1){
+                self.tableDataDocter.splice(ind,1);
+                alert('删除成功');
+              }else{
+                alert('删除失败')
+              }
+            })
           }
         }
     }

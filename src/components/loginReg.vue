@@ -43,7 +43,7 @@
 <script>
     import axios from 'axios'
     import Alert from "./alert";
-
+    axios.defaults.withCredentials=true;
     export default {
       components: {Alert},
       name: "login-reg",
@@ -142,6 +142,7 @@
       },
       methods:{
           login(){
+            //登录，用户名，密码登录
               axios.get('', {
                 params: {
                   username:this.form.user,
@@ -149,14 +150,20 @@
                 }
               })
               .then(response=> {
+                /*
+                {
+                  res:1//表示登录成功
+                  identity//表示身份
+                  username://用户名
+                }
+                默认，医生有自己的用户名，患者有自己的用户名，但是管理员只有唯一的用户名”manger“
+                */
                 if(response.data.res===1){
-                  if(response.data.identity=='docter'){
-                    this.$store.commit('loginSucceful',{username:response.data.username,loginIf:true});
-                  }else if(response.data.identity=='manger'){
-                    this.$store.commit('loginSucceful',{username:'manger',loginIf:true});
-                  }else{
-                    this.$store.commit('loginSucceful',{username:response.data.username,loginIf:true});
-                  }
+                  this.$store.commit('loginSucceful',{
+                    username:response.data.username,
+                    identity:response.data.identity,
+                    loginIf:true
+                  })
                 }else{
                   this.$store.commit('alert',{
                     visible:true,
@@ -176,6 +183,7 @@
               this.$store.commit('ChangeloginClick');
           },
           reg(){
+            //注册接口
             axios.get('', {
               params: {
                 username:this.formReg.user,

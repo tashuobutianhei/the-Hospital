@@ -35,6 +35,7 @@ const store = new Vuex.Store({
     //记录用户的登录信息
     login:{
       username:'emmmm',
+      id:'',
       loginIf:false
     }
   },
@@ -58,11 +59,12 @@ const store = new Vuex.Store({
       state.alert = it
     },
     loginSucceful(state,it){
-      state.login = it
+      state.login.username = it.username
+      state.login.id = it.identity
+      state.login.loginIf = true
     }
   }
 })
-
 const Routers =[
   {
     path:'*',
@@ -75,6 +77,13 @@ const Routers =[
   {
     path:'/docter',
     component:(resolve)=> require(['./components/docter.vue'],resolve),
+    beforeEnter:(to, from, next) => {
+      if(store.state.login.id!=='docter'){
+        next({path:'/index'});
+      }else{
+        next()
+      }
+    },
     children:[
       {
         path:'wei/:id',
@@ -95,6 +104,13 @@ const Routers =[
   {
     path:'/manger',
     component:(resolve)=> require(['./components/manger.vue'],resolve),
+    beforeEnter:(to, from, next) => {
+      if(store.state.login.id!=='manger'){
+        next({path:'/index'});
+      }else{
+        next()
+      }
+    },
     children:[
       {
         path:'schel/:keshi',

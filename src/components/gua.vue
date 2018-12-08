@@ -1,6 +1,15 @@
 <template>
     <el-container ref="all" style="height: 1000px">
       <login-reg></login-reg>
+
+      <el-dialog title="查询结果" :visible.sync="watchValueVisible">
+        <el-table :data="watchValue">
+          <el-table-column  prop="docter" label="医生" width="150"></el-table-column>
+          <el-table-column prop="type" label="科室" width="200"></el-table-column>
+          <el-table-column prop="time" label="时间"></el-table-column>
+        </el-table>
+      </el-dialog>
+
       <el-header style="background-color:white">
           <title-top></title-top>
       </el-header>
@@ -88,7 +97,7 @@
                               </el-form-item>
 
                               <el-form-item>
-                                <el-button type="primary" >立即挂号</el-button>
+                                <el-button type="primary" @click="guahao">立即挂号</el-button>
                                 <el-button @click="resetForm('formA')">重置</el-button>
                               </el-form-item>
                             </el-form>
@@ -162,7 +171,10 @@
     import ElMain from "element-ui/packages/main/src/main";
     import LoginReg from "./loginReg";
     import Footers from "./footers";
+     import axios from 'axios'
+    import Alert from "./alert";
 
+    axios.defaults.withCredentials=true;
     export default {
         name: "gua",
         components:{
@@ -311,7 +323,9 @@
               datatime:[
                 { validator: checktime, trigger: 'blur' }
               ]
-            }
+            },
+            watchValue:[],
+            watchValueVisible:false,
           }
         },
         methods:{
@@ -327,6 +341,57 @@
               case "D":this.title="银行预约挂号及取号流程";break;
               case "E":this.title="请填入您想查询的医师和相关科室的坐诊信息";break;
             }
+          },
+          watch(){
+            var self = this;
+             self.watchValue=[];
+            //这个接口，根据给定的三个信息，查询一下医生的时间信息，返回一个排班
+            axios.get('',{
+              params:{ 
+                name:self.formB.name, //疾病名称
+                docter:self.formB.docter, //医生
+                room:self.formB.room //科室
+              }
+            }).then(res=>{
+              //返回一个json
+              /*
+              {
+                type:科室
+                docter:医生姓名
+                time:时间戳格式   就是距离1970年的毫秒数
+                zaowu:早上还是下午   //布尔类型，早上是true
+              }
+              */
+              var time =(new Date(res.data.time).getMonth()+1)+'--'+(new Date(res.data.time).getMonth())+'-8:00~13:00'
+              if(!res.data.zaowu){
+                 time =(new Date(res.data.time).getMonth()+1)+'--'+(new Date(res.data.time).getMonth())+'-13:00~18:00'
+              }
+              self.watchValue.push({
+                docter:res.data.docter,
+                type:res.data.type,
+                time:time
+              })
+              self.watchValueVisible=true;
+            })
+          },
+          guahao(){
+            if(!this.$store.state.login.login.loginIf){
+                alert('请先登录');
+                return;
+            }
+            //挂号接口
+            var self = this;
+            axios.get('',{
+              docter:self.form.docter,
+              date:self.form.datatime,
+              type:self.form.type,
+              name:self.form.name
+            }).then(res=>{
+              //进行挂号，检查信息是否符合，科室医生日期，如果符合进行挂号操作，返回res=1表示成功
+              if(res===1){
+                alert('挂号成功')
+              }
+            })
           }
         },
         mounted(){

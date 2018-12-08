@@ -75,6 +75,10 @@
     import docterWei from './docterWer';
     import docterRoom from './docterRoom';
     import docterAlready from './docterAlready';
+    import axios from 'axios'
+    import Alert from "./alert";
+
+    axios.defaults.withCredentials=true;
     export default {
       components: {
         ElButton,
@@ -88,6 +92,50 @@
         docterRoom,
         docterWei},
       name: "docter",
+      mounted(){
+          var self = this;
+          //该接口，根据医生的用户名去获取他所诊治病人的情况。
+          axios.get('',{
+            params:{
+              username:self.$store.state.login.username
+            }
+          }).then((res)=>{
+            /*
+            返回一个json，格式如下：
+            该json，表示一个医生手下获取到的病人的信息。
+             {
+               unList:[ //为诊治列表
+                {
+                  route:'/docter/wei/001',  //作为前端路由使用，将/docter/wei/ 和 id进行拼接
+                  type:'un',  //类型，就按我的来吧
+                  id:'001',  //病人id
+                  name:'xxx', //病人用户名
+                }
+              ]，
+               readyList:[ //已诊治列表
+                {
+                  route:'/docter/ready/001', //作为前端路由使用，将/docter/ready/ 和 id进行拼接
+                  type:'ready',
+                  id:'001',
+                  name:'xxx',
+                }
+              ]，
+               roomList:[  //住院列表
+                {
+                  route:'/docter/room/001', //作为前端路由使用，将/docter/room/ 和 id进行拼接
+                  type:'room',
+                  id:'001',
+                  name:'xxx',
+                }
+              ]，
+             }*/
+            this.unList=res.data.unList;
+            this.readyList=res.data.readyList;
+            this.roomList=res.data.roomList;
+           
+
+          })
+      },
       data(){
         return{
           unList:[
@@ -254,7 +302,6 @@
           chance(it){
             this.$store.commit('ChangedocterWhich',it)
           }
-
       }
     }
 </script>

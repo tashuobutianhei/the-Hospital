@@ -11,7 +11,7 @@
     </el-row>
 
     <el-row >
-        <el-col :span="8" offset="6">
+        <el-col :span="8" :offset="6">
           <div class="enter1" ref="div" id="enter1">
             <img src="../assets/爱心捐赠.png">
             <span>患者入口</span>
@@ -19,11 +19,11 @@
           </div>
         </el-col>
 
-        <el-col :span="8"  offset="0">
+        <el-col :span="8"  :offset="0">
           <div  class="enter1"  ref="div" id="enter2">
             <img src="../assets/员工信息.png">
             <span>员工入口</span>
-            <el-button round ref="button2" @click="enter('docter')" >点击进入</el-button>
+            <el-button round ref="button2" @click="enter('worker')" >点击进入</el-button>
         </div>
         </el-col>
     </el-row>
@@ -37,6 +37,7 @@
 <script>
     import ElButton from "element-ui/packages/button/src/button";
     import LoginReg from "./loginReg";
+   
 
     export default {
         name: "enter",
@@ -52,15 +53,12 @@
           enter(it){
             if(it=='suffer'){
               this.$router.push('/sufferer')
-            }else if(it=='manger'){
-              this.$router.push('/manger')
-            }else if(it=="gua"){
-              this.$router.push('/gua')
-            }else{
-              this.$store.commit('ChangeloginClick')
-
-
-                //this.$router.push('/docter')
+            }else if(it==='worker'){
+              if(this.$store.state.login.id!==''){
+                  this.$router.push('/'+this.$store.state.login.id);
+              }else{
+                  this.$store.commit('ChangeloginClick')
+              }
             }
           },
           open(message) {

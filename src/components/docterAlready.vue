@@ -123,8 +123,72 @@
 </template>
 
 <script>
+  import axios from 'axios'
+  import Alert from "./alert";
+
+    axios.defaults.withCredentials=true;
     export default {
         name: "docter-already",
+        mounted(){
+          this.id=this.$route.params.id
+          var self = this;
+          //根据用户id获取病情
+          axios.get('',{
+            params:{
+              id:self.id
+            }
+          }).then((res)=>{
+             /*返回的json格式
+             用户信息
+              {
+                    type:'ready'//表示已诊治,
+                    id:'病号id'
+                    name:'病号姓名'，
+                    //具体就诊信息
+                    info:{
+                      time:''//就诊日期
+                      age:''//年龄
+                      sex:''//性别
+                      tel:''//电话
+                      value:''//病情描述
+                      address:''//地址
+                      //以上信息为未诊治时的应有信息，以下信息在此数组中只留字段key就可以了，就是留写成ke:''即可，得发送过来
+                      docterValue:''//医生针对其的详细描述
+                      huayan:''//化验情况
+                      result:''//医生诊断结果
+                      way:''//治疗方式
+                      domains:[]//药物或者手术情况
+                      room:''//true或false 是否住院
+                       //住院记录数组,在列表中可以为空，但是留字段位置
+                      roomValue:[
+                        {
+                          date:''//一次诊治记录的日期
+                          value:""//患者病情
+                          how:''//本次记录如何诊治
+                          medicine:''//药物情况
+                          out:''//是否可以出院 true或者false
+                        }
+                      ]
+                    }
+                  }
+             */
+            self.tableData.push({
+              date:res.data.info.time,
+              name:res.data.name,
+              address:res.data.info.address,
+              sex:res.data.info.sex,
+              tel:res.data.info.tel,
+              age:res.data.info.age,
+              value:res.data.info.value
+            })
+            self.formLabelAlign.what=res.data.docterValue;
+            self.formLabelAlign.huayan=res.data.huayan;
+            self.formLabelAlign.reason=res.data.result;
+            self.formLabelAlign.type=res.data.way;
+            self.formLabelAlign.domains=res.data.domains
+            self.formLabelAlign.room=res.data.room;
+          })
+        },
         data(){
           return{
             formLabelAlign: {
@@ -135,15 +199,7 @@
               huayan:'',
               domains: [],
             },
-            tableData: [{
-              date: '2016-05-02',
-              name: '王小虎',
-              address: '上海市普陀区金沙江路 1518 弄',
-              sex:'男',
-              tel:'18312345678',
-              age:'18',
-              value:'腿疼，下雨天更疼'
-            }],
+            tableData: [],
           }
         }
     }

@@ -28,7 +28,7 @@
       <el-col :span='12' index="reg" class="reg" ><span @click="$store.commit('ChangeRegClick')">注册</span></el-col>
     </el-row>
 
-    <el-row class="RegLog" v-else="$store.state.login.loginIf">
+    <el-row class="RegLog" v-else>
       <el-col :span='12' index="login" class="login"><span>{{$store.state.login.username}}</span></el-col>
       <el-col :span='12' index="reg" class="reg" ><span @click="out">退出登录</span></el-col>
     </el-row>
@@ -60,7 +60,7 @@
         if(this.$route.path!='index'){
             this.$router.replace('/index');
         }
-        this.$store.commit('loginSucceful',{username:'',loginIf:false});
+        this.$store.commit('loginSucceful',{username:'',id:'',loginIf:false});
         this.$store.commit('alert',{visible:true,value:'您已经成功退出登录，拜拜'})
       }
     }

@@ -164,6 +164,7 @@
                     identity:response.data.identity,
                     loginIf:true
                   })
+                  this.$router.push('/'+this.$store.state.login.id);
                 }else{
                   this.$store.commit('alert',{
                     visible:true,

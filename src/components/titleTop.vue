@@ -40,7 +40,9 @@
 </template>
 <script>
   import LoginReg from "./loginReg";
-
+  import axios from 'axios'
+    import Alert from "./alert";
+    axios.defaults.withCredentials=true;
 
   export default {
     components: {LoginReg},
@@ -56,12 +58,18 @@
         console.log(key, keyPath);
       },
       out(){
-        console.log(this.$route)
-        if(this.$route.path!='index'){
-            this.$router.replace('/index');
-        }
-        this.$store.commit('loginSucceful',{username:'',id:'',loginIf:false});
-        this.$store.commit('alert',{visible:true,value:'您已经成功退出登录，拜拜'})
+        //退出登陆接口返回res=1表示成功，不穿参数，你用session判断
+         axios.get('').then((res)=>{
+            if(res.data=='1'){
+                console.log(this.$route)
+                this.$store.commit('loginSucceful',{username:'',id:'',loginIf:false});
+                this.$store.commit('alert',{visible:true,value:'您已经成功退出登录，拜拜'})
+                if(this.$route.path!='index'){
+                    this.$router.replace('/index');
+                }
+               
+            }
+          })
       }
     }
   }
